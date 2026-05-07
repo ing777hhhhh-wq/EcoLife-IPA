@@ -5,20 +5,17 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - name: Install dependencies
+      - name: Force Build
         run: |
-          cd mobile
-          npm install
-      - name: Build IPA
-        run: |
-          cd mobile
-          npx expo export:embed --platform ios
-      - name: Upload Artifact
+          cd mobile/mobile/
+          npm install --force
+          npx expo export:embed --platform ios --output-dir dist
+      - name: Upload
         uses: actions/upload-artifact@v3
         with:
-          name: EcoLife-IPA
-          path: mobile/dist/*.ipa
+          name: EcoLife-Final-IPA
+          path: mobile/mobile/dist/*.ipa
