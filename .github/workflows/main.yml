@@ -11,22 +11,24 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Auto-Detect and Build
+      - name: Find and Install
         run: |
-          # البحث عن مكان ملف package.json الحقيقي
-          APP_DIR=$(find . -name "package.json" -not -path "*/node_modules/*" -exec dirname {} \; | head -n 1)
-          echo "تم العثور على التطبيق في: $APP_DIR"
-          cd "$APP_DIR"
-          
-          # تنظيف وتنصيب المكتبات
+          # البحث عن مكان ملف package.json الحقيقي بعيداً عن المجلدات المكررة
+          TARGET_DIR=$(find . -name "package.json" -not -path "*/node_modules/*" -exec dirname {} \; | head -n 1)
+          echo "App found in: $TARGET_DIR"
+          cd "$TARGET_DIR"
           npm install --force
-          
-          # إنشاء مجلد المخرجات وإصدار الملف
+
+      - name: Build and Export
+        run: |
+          TARGET_DIR=$(find . -name "package.json" -not -path "*/node_modules/*" -exec dirname {} \; | head -n 1)
+          cd "$TARGET_DIR"
           mkdir -p dist
+          # بناء التطبيق بدون الحاجة لشهادات حالياً للتجربة
           npx expo export:embed --platform ios --output-dir dist --dev false
 
-      - name: Upload IPA Artifact
+      - name: Upload Everything
         uses: actions/upload-artifact@v4
         with:
-          name: EcoLife-Final-App
+          name: EcoLife-App-Files
           path: "**/dist/*"
