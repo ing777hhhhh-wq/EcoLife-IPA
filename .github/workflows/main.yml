@@ -1,0 +1,17 @@
+name: Build IPA
+on: [push]
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install
+      - name: Build IPA
+        run: npx expo export:embed --platform ios
+      - name: Upload IPA
+        uses: actions/upload-artifact@v3
+        with:
+          name: My-App-IPA
+          path: dist/*.ipa
+        
