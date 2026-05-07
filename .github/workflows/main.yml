@@ -11,24 +11,19 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Find and Install
+      - name: Force Build
         run: |
-          # البحث عن مكان ملف package.json الحقيقي بعيداً عن المجلدات المكررة
+          # البحث عن أول مجلد يحتوي على package.json
           TARGET_DIR=$(find . -name "package.json" -not -path "*/node_modules/*" -exec dirname {} \; | head -n 1)
-          echo "App found in: $TARGET_DIR"
+          echo "تم العثور على التطبيق في: $TARGET_DIR"
           cd "$TARGET_DIR"
+          
+          # تنصيب المكتبات وبناء الملفات
           npm install --force
-
-      - name: Build and Export
-        run: |
-          TARGET_DIR=$(find . -name "package.json" -not -path "*/node_modules/*" -exec dirname {} \; | head -n 1)
-          cd "$TARGET_DIR"
-          mkdir -p dist
-          # بناء التطبيق بدون الحاجة لشهادات حالياً للتجربة
           npx expo export:embed --platform ios --output-dir dist --dev false
 
-      - name: Upload Everything
+      - name: Upload Files
         uses: actions/upload-artifact@v4
         with:
-          name: EcoLife-App-Files
+          name: EcoLife-Final-Package
           path: "**/dist/*"
