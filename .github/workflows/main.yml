@@ -9,14 +9,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - name: Install & Build
+      - name: Find and Build
         run: |
-          find . -name "package.json"
-          cd mobile/mobile
+          # هذا الأمر بيبحث عن مجلد المشروع وين ما كان
+          PATH_TO_APP=$(find . -name "package.json" -exec dirname {} \;)
+          cd $PATH_TO_APP
           npm install --force
           npx expo export:embed --platform ios --output-dir dist
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: EcoLife-IPA
+          name: EcoLife-Final
           path: "**/dist/*.ipa"
