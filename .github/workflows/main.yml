@@ -5,16 +5,28 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+      
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - name: Find and Build
+
+      - name: Auto-Detect and Build
         run: |
-          # هذا الأمر بيبحث عن مجلد المشروع وين ما كان
-          PATH_TO_APP=$(find . -name "package.json" -exec dirname {} \; | head -n 1)
-          echo "Found app in: $PATH_TO_APP"
-          cd $PATH_TO_APP
+          # البحث عن مكان ملف package.json الحقيقي
+          APP_DIR=$(find . -name "package.json" -not -path "*/node_modules/*" -exec dirname {} \; | head -n 1)
+          echo "تم العثور على التطبيق في: $APP_DIR"
+          cd "$APP_DIR"
+          
+          # تنظيف وتنصيب المكتبات
           npm install --force
-          npx expo export:embed --platform ios --output-dir dist
-      - name:
+          
+          # إنشاء مجلد المخرجات وإصدار الملف
+          mkdir -p dist
+          npx expo export:embed --platform ios --output-dir dist --dev false
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: EcoLife-Final-App
+          path: "**/dist/*"
