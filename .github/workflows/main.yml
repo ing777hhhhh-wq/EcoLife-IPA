@@ -13,6 +13,7 @@ jobs:
         run: |
           # هذا الأمر بيبحث عن مجلد المشروع وين ما كان
           PATH_TO_APP=$(find . -name "package.json" -exec dirname {} \;)
+          echo "Found app in: $PATH_TO_APP"
           cd $PATH_TO_APP
           npm install --force
           npx expo export:embed --platform ios --output-dir dist
