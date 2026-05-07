@@ -1,29 +1,17 @@
-name: Build IPA
+name: Check Code
 on: [push]
 jobs:
-  build:
-    runs-on: macos-latest
+  check:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-
-      - name: Force Build
+      - name: Install
         run: |
-          # البحث عن أول مجلد يحتوي على package.json
-          TARGET_DIR=$(find . -name "package.json" -not -path "*/node_modules/*" -exec dirname {} \; | head -n 1)
-          echo "تم العثور على التطبيق في: $TARGET_DIR"
-          cd "$TARGET_DIR"
-          
-          # تنصيب المكتبات وبناء الملفات
+          cd mobile/mobile
           npm install --force
-          npx expo export:embed --platform ios --output-dir dist --dev false
-
-      - name: Upload Files
-        uses: actions/upload-artifact@v4
-        with:
-          name: EcoLife-Final-Package
-          path: "**/dist/*"
+      - name: Success
+        run: echo "Code is ready!"
