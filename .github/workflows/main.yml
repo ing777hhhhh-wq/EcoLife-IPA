@@ -9,13 +9,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - name: Build
+      - name: Install & Build
         run: |
+          find . -name "package.json"
           cd mobile/mobile
           npm install --force
           npx expo export:embed --platform ios --output-dir dist
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: EcoLife-Final-IPA
-          path: mobile/mobile/dist/*.ipa
+          name: EcoLife-IPA
+          path: "**/dist/*.ipa"
